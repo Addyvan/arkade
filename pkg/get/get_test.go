@@ -1183,6 +1183,43 @@ func Test_DownloadArgocd(t *testing.T) {
 	}
 }
 
+func Test_DownloadArgo(t *testing.T) {
+	tools := MakeTools()
+	name := "argo"
+
+	var tool *Tool
+	for _, target := range tools {
+		if name == target.Name {
+			tool = &target
+			break
+		}
+	}
+
+	tests := []test{
+		{os: "mingw64_nt-10.0-18362",
+			arch:    arch64bit,
+			version: "v2.11.8",
+			url:     "https://github.com/argoproj/argo/releases/download/v2.11.8/argo-windows-amd64.exe"},
+		{os: "linux",
+			arch:    arch64bit,
+			version: "v2.11.8",
+			url:     "https://github.com/argoproj/argo/releases/download/v2.11.8/argo-linux-amd64"},
+		{os: "darwin",
+			arch:    arch64bit,
+			version: "v2.11.8",
+			url:     "https://github.com/argoproj/argo/releases/download/v2.11.8/argo-darwin-amd64"},
+	}
+	for _, tc := range tests {
+		got, err := tool.GetURL(tc.os, tc.arch, tc.version)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got != tc.url {
+			t.Errorf("want: %s, got: %s", tc.url, got)
+		}
+	}
+}
+
 func Test_DownloadNerdctl(t *testing.T) {
 	tools := MakeTools()
 	name := "nerdctl"
